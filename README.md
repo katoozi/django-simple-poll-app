@@ -1,0 +1,3 @@
+# PollSystem
+
+## written in python
