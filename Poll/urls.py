@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from Poll import views
+from . import views
 
 urlpatterns = [
     url(r'^vote/(?P<poll_pk>\d+)/$', views.vote, name='poll_ajax_vote'),
