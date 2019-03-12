@@ -1,0 +1,87 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2019 Mohammad Katoozi(k2527806@gmail.com).
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR k2527806@gmail.com, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-03-12 06:51+0000\n"
+"PO-Revision-Date: 2019-03-12 10:24+3:30\n"
+"Last-Translator: Mohammad Katoozi k2527806@gmail.com\n"
+"Language-Team: Persian k2527806@gmail.com\n"
+"Language: Persian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: Poll/models.py:28
+msgid "question"
+msgstr ""
+
+#: Poll/models.py:29
+msgid "date"
+msgstr ""
+
+#: Poll/models.py:30
+msgid "is published"
+msgstr ""
+
+#: Poll/models.py:37 Poll/models.py:72 Poll/templates/poll/base.html:8
+msgid "poll"
+msgstr ""
+
+#: Poll/models.py:38
+msgid "polls"
+msgstr ""
+
+#: Poll/models.py:54
+msgid "value"
+msgstr ""
+
+#: Poll/models.py:55
+msgid "position"
+msgstr ""
+
+#: Poll/models.py:58
+msgid "answer"
+msgstr ""
+
+#: Poll/models.py:59
+msgid "answers"
+msgstr ""
+
+#: Poll/models.py:73
+msgid "voted item"
+msgstr ""
+
+#: Poll/models.py:74
+msgid "user's IP"
+msgstr ""
+
+#: Poll/models.py:76
+msgid "user"
+msgstr ""
+
+#: Poll/models.py:80
+msgid "vote"
+msgstr ""
+
+#: Poll/models.py:81
+msgid "votes"
+msgstr ""
+
+#: Poll/templates/poll/poll.html:18
+msgid "Please, select an answer"
+msgstr ""
+
+#: Poll/templates/poll/poll.html:40
+msgid "Vote"
+msgstr ""
+
+#: Poll/templates/poll/result.html:16
+msgid "Total votes"
+msgstr ""
