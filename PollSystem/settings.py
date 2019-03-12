@@ -1,4 +1,5 @@
 import os
+import redis
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,6 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Poll',
+    'Public',
     'easy_select2',
     'smart_selects',
     'dal',
@@ -55,10 +57,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'PollSystem.wsgi.application'
 
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 1,
+    'password': '',
+    'prefix': 'session',
+    'socket_timeout': 1,
+    'retry_on_timeout': True
+}
+
+REDIS_CONNECTION = redis.Redis(host='localhost', port=6379, db=0)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'postgresql': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'Name',
+        'USER': 'User',
+        'PASSWORD': 'Password',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -98,3 +121,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'assets', 'static'), ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'assets', 'media')
+
+FILE_UPLOAD_PERMISSIONS = 0o644
