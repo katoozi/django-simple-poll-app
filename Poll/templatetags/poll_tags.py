@@ -3,8 +3,10 @@
 from django import template
 from django.template.loader import render_to_string
 from django.utils.html import format_html
-from poll.models import *
-from poll import views
+
+from Poll import views
+from Poll.models import Item, Poll
+
 register = template.Library()
 
 
@@ -32,7 +34,7 @@ def poll(context):
     return content
 
 
-@register.simple_tag                                                                                                                         
+@register.simple_tag
 def percentage(poll, item):
     poll_vote_count = poll.get_vote_count()
     if poll_vote_count > 0:

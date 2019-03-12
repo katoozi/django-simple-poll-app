@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import RequestContext
 
+from .models import Item, Poll, Vote
 from .utils import set_cookie
-from .models import Poll, Item, Vote
 
 
 def vote(request, poll_pk):

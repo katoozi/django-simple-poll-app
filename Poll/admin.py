@@ -1,6 +1,7 @@
 from django.contrib import admin
-from Poll.models import *
 from django.utils.translation import gettext as _
+
+from .models import Poll, Vote
 
 
 class PollItemInline(admin.TabularInline):
@@ -11,13 +12,13 @@ class PollItemInline(admin.TabularInline):
 
 class PollAdmin(admin.ModelAdmin):
     list_display = ('title', 'date', 'vote_count', 'is_published')
-    inlines = [PollItemInline,]
-
-admin.site.register(Poll, PollAdmin)
+    inlines = [PollItemInline, ]
 
 
 class VoteAdmin(admin.ModelAdmin):
     list_display = ('poll', 'ip', 'user', 'datetime')
     list_filter = ('poll', 'datetime')
 
+
 admin.site.register(Vote, VoteAdmin)
+admin.site.register(Poll, PollAdmin)
