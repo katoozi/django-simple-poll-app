@@ -67,6 +67,7 @@ SESSION_REDIS = {
     'socket_timeout': 1,
     'retry_on_timeout': True
 }
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 REDIS_CONNECTION = redis.Redis(host='localhost', port=6379, db=0)
 
@@ -100,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'fa'
+LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('en-us', 'English'),
     ('fa', 'Persian')
