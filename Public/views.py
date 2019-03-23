@@ -14,24 +14,28 @@ from .forms import LoginForm
 class LoginView(FormView):
     form_class = LoginForm
     http_method_names = ['get', 'post']
+    template_name = "Public/login.html"
 
     def get(self, request, *args, **kwargs):
-        return render(request, "Public/login.html", {})
+        return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
         form_data = self.form_class(request.POST)
 
         if not form_data.is_valid():
             # form that user submited have errors
-            # TODO: Handle the form errors
-            return render(request, "Public/login.html", {
+            # we split form errors in template, show them by notifications
+            return render(request, self.template_name, {
                 "form": form_data
             })
+
+        # check the form data with database
         user_obj = authenticate(**form_data.cleaned_data)
         if user_obj is None:
             # credentials that user submited do not belong to anyone
-            # TODO: handle the user does not exists situation
-            pass
+            return render(request, self.template_name, {
+                "form": form_data
+            })
 
         # check the user remember box checked
         if form_data.cleaned_data['remember_me'] is 'True':

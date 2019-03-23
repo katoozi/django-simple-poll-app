@@ -45,12 +45,23 @@
 				<div class="d-flex justify-content-center mt-3 login_container">
 					<button onClick="document.login_form.submit();" type="button" name="button" class="btn login_btn">{% trans 'Login' %}</button>
 				</div>
-				<div class="mt-4">
+				{% comment %} <div class="mt-4">
 					<div class="d-flex justify-content-center links">
 						<a href="#">{% trans 'Forgot your password?' %}</a>
 					</div>
-				</div>
+				</div> {% endcomment %}
 			</div>
 		</div>
 	</div>
 {% endblock content %}
+{% comment %} {% block js_files %}
+	{% if form.errors %}
+		<script>
+			{% for field in form %}
+				{% for error in field.errors %}
+					toastr.error('{{ error|escape }}');
+				{% endfor %}
+			{% endfor %}
+		</script>
+	{% endif %}
+{% endblock js_files %} {% endcomment %}

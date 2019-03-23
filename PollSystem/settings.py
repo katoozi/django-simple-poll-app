@@ -57,6 +57,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'PollSystem.wsgi.application'
 
+""" 
+Redis Databases:
+    0 => user and poll system data
+    1 => user login sessions
+"""
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # used for enable remember me on login page
 SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS = {
     'host': 'localhost',
@@ -67,7 +74,6 @@ SESSION_REDIS = {
     'socket_timeout': 1,
     'retry_on_timeout': True
 }
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 REDIS_CONNECTION = redis.Redis(host='localhost', port=6379, db=0)
 
