@@ -32,13 +32,14 @@ class LoginView(FormView):
             # credentials that user submited do not belong to anyone
             # TODO: handle the user does not exists situation
             pass
-        
+
         # check the user remember box checked
         if form_data.cleaned_data['remember_me'] is 'True':
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
         login(request, user_obj)
         return redirect("public:login")
+
 
 @login_required
 def logout_view(request):
