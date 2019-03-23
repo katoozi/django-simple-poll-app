@@ -2,5 +2,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url("$", views.home, name="home"),
+    url("$", views.LoginView.as_view(), name="login"),
+    url("$", views.logout, name="logout"),
 ]

@@ -1,19 +1,19 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.conf import settings
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.views.generic import FormView
+from Poll.models import Item, Poll, Vote
 
 
-def home(request):
-    return render(request, "Public/home.html", {
-        "Text": "Download From Google"
-    })
+class LoginView(FormView):
+    def get(self, request, *args, **kwargs):
+        return render(request, "Public/login.html", {})
 
-
-def login(request):
-    pass
+    def post(self, request, *args, **kwargs):
+        return render(request, "Public/login.html", {})
 
 
 def logout(request):
     logout(request)
-    return redirect("Public:home")
+    return redirect("Public:login")
