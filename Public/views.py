@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
-from django.views.generic import FormView
+from django.views.generic import FormView, ListView
 
 from Poll.models import Item, Poll, Vote
 
@@ -43,6 +43,13 @@ class LoginView(FormView):
 
         login(request, user_obj)
         return redirect("public:login")
+
+
+
+class VoteListView(ListView):
+    model = Vote
+    template_name = "Public/vote.html"
+
 
 
 @login_required
