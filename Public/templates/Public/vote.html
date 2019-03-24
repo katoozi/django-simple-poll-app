@@ -6,5 +6,11 @@
 {% endblock title %}
 
 {% block content %}
-    
+    {% for poll in polls %}
+        {% for question in poll.questions.all %}
+            {% for answer in question.question_answers.all %}
+                {{answer.value}}
+            {% endfor %}
+        {% endfor %}
+    {% endfor %}
 {% endblock content %}

@@ -34,6 +34,9 @@ class ItemAdminPanel(admin.ModelAdmin):
 
 
 class VoteAdminPanel(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+
     form = select2_modelform(Vote, attrs={'width': '300px'})
     model = Vote
     list_display = ['poll', 'user', 'ip', 'vote_time']

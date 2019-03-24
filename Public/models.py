@@ -2,12 +2,16 @@
 
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.manager import Manager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
 User = get_user_model()
+redis_con = settings.REDIS_CONNECTION
 
 
 class Question(models.Model):
@@ -52,8 +56,15 @@ class Item(models.Model):
 
 
 class PublishedManager(Manager):
-    def get_query_set(self):
-        return super(PublishedManager, self).get_query_set().filter(is_published=True)
+    def get_queryset(self):
+        return super(PublishedManager, self).get_queryset().filter(is_published=True)
+
+    def exclude_user_old_votes(self, user_id):
+        # get poll ids that user already votes, we save them in redis for reduce sql querys
+        # remember that you have to enable Redis Persistence
+        user_votes = list(redis_con.smembers(str(user_id)))
+
+        return self.get_queryset().exclude(pk__in=user_votes)
 
 
 class Poll(models.Model):
@@ -97,3 +108,8 @@ class Vote(models.Model):
 
     def __unicode__(self):
         return self.user.username
+
+
+@receiver(post_save, sender=Vote)
+def vote_post_save_receiver(sender, instance, **kwargs):
+    redis_con.sadd(str(instance.user.pk), instance.pk)
