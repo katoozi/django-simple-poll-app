@@ -23,10 +23,6 @@ class Question(models.Model):
     def __unicode__(self):
         return self.title
 
-    def get_vote_count(self):
-        return Vote.objects.filter(question=self).count()
-    question_vote_count = property(fget=get_vote_count)
-
     class Meta:
         ordering = ['-id']
         verbose_name = _('Question')
@@ -50,10 +46,6 @@ class Item(models.Model):
     def __unicode__(self):
         return self.value
 
-    def get_vote_count(self):
-        return Vote.objects.filter(item=self).count()
-    item_vote_count = property(fget=get_vote_count)
-
 
 class PublishedManager(Manager):
     def get_queryset(self):
@@ -62,8 +54,9 @@ class PublishedManager(Manager):
     def exclude_user_old_votes(self, user_id):
         # get poll ids that user already votes, we save them in redis for reduce sql querys
         # remember that you have to enable Redis Persistence
-        user_votes = list(redis_con.smembers(str(user_id)))
+        user_votes = redis_con.smembers(user_id)
 
+        # exclude user old votes from query set
         return self.get_queryset().exclude(pk__in=user_votes)
 
 
@@ -87,7 +80,8 @@ class Poll(models.Model):
         return self.title
 
     def get_vote_count(self):
-        return Vote.objects.filter(poll=self).count()
+        return redis_con.get("poll:%s" % (self.pk))
+        # return Vote.objects.filter(poll=self).count()
     poll_vote_count = property(fget=get_vote_count)
 
 
@@ -112,4 +106,20 @@ class Vote(models.Model):
 
 @receiver(post_save, sender=Vote)
 def vote_post_save_receiver(sender, instance, **kwargs):
-    redis_con.sadd(str(instance.user.pk), instance.pk)
+    pipe = redis_con.pipeline()
+
+    # save the user vote poll
+    pipe.sadd(instance.user.pk, instance.pk)
+
+    # use fo get total poll votes
+    pipe.incr("poll:%s" % (instance.pk), instance.user.pk)
+
+    # use for get poll question total votes
+    pipe.incr("poll:%s,question:%s" %
+              (instance.pk, instance.question.pk))
+
+    # use for get poll question answer total votes
+    pipe.incr("poll:%s,question:%s,answer:%s" % (
+        instance.pk, instance.question.pk, instance.item.pk), instance.user.pk)
+
+    pipe.execute()
