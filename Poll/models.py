@@ -18,8 +18,8 @@ class PublishedManager(Manager):
         return super(PublishedManager, self).get_query_set().filter(is_published=True)
 
 
-class Poll(models.Model):
-    title = models.CharField(max_length=250, verbose_name=_('question'))
+class Question(models.Model):
+    title = models.CharField(max_length=250, verbose_name=_('Question'))
     date = models.DateField(verbose_name=_(
         'date'), default=datetime.date.today)
     is_published = models.BooleanField(
@@ -29,7 +29,16 @@ class Poll(models.Model):
     published = PublishedManager()
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-id']
+        verbose_name = _('poll')
+        verbose_name_plural = _('polls')
+
+
+class Poll(models.Model):
+    title = models.CharField(max_length=250, verbose_name=_('Poll Title'))
+    questions = models.ManyToManyField(Question, related_name="qustions")
+
+    class Meta:
         verbose_name = _('poll')
         verbose_name_plural = _('polls')
 
@@ -48,7 +57,7 @@ class Poll(models.Model):
 
 
 class Item(models.Model):
-    poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     value = models.CharField(max_length=250, verbose_name=_('value'))
     pos = models.SmallIntegerField(default='0', verbose_name=_('position'))
 

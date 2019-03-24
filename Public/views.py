@@ -6,9 +6,7 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView, ListView
 
-from Poll.models import Item, Poll, Vote
-
-from .forms import LoginForm
+from .forms import LoginForm, PollForm
 
 
 class LoginView(FormView):
@@ -42,14 +40,21 @@ class LoginView(FormView):
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
         login(request, user_obj)
-        return redirect("public:login")
+        return redirect("public:vote")
 
 
-
-class VoteListView(ListView):
-    model = Vote
+class VoteView(ListView):
+    # model = Poll
     template_name = "Public/vote.html"
+    context_object_name = "polls"
 
+    def get_queryset(self):
+        return self.model.published.filter()
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context[""] =
+    #     return context
 
 
 @login_required

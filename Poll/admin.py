@@ -11,8 +11,8 @@ class PollItemInline(admin.TabularInline):
 
 
 class PollAdmin(admin.ModelAdmin):
-    list_display = ('title', 'date', 'vote_count', 'is_published')
-    inlines = [PollItemInline, ]
+    list_display = ('title', 'vote_count')
+    # inlines = [PollItemInline, ]
 
 
 class VoteAdmin(admin.ModelAdmin):
