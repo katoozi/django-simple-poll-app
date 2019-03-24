@@ -8,7 +8,7 @@ from .models import Item, Poll, Question, Vote
 class PollAdminPanel(admin.ModelAdmin):
     model = Poll
     filter_horizontal = ('questions',)
-    list_display = ['title', 'is_published']
+    list_display = ['title', 'is_published', 'poll_vote_count']
     list_filter = ['is_published']
     search_fields = ['title']
 
@@ -21,7 +21,7 @@ class ItemForQuestionInline(admin.TabularInline):
 
 class QuestionAdminPanel(admin.ModelAdmin):
     model = Question
-    list_display = ['title', 'question_vote_count']
+    list_display = ['title']
     inlines = [ItemForQuestionInline, ]
     search_fields = ['title']
 
@@ -29,11 +29,14 @@ class QuestionAdminPanel(admin.ModelAdmin):
 class ItemAdminPanel(admin.ModelAdmin):
     form = select2_modelform(Item, attrs={'width': '300px'})
     model = Item
-    list_display = ['question', 'value', 'pos', 'item_vote_count']
+    list_display = ['question', 'value', 'pos']
     search_fields = ['value', 'pos', 'question__title']
 
 
 class VoteAdminPanel(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+
     form = select2_modelform(Vote, attrs={'width': '300px'})
     model = Vote
     list_display = ['poll', 'user', 'ip', 'vote_time']

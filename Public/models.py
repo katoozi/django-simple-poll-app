@@ -2,12 +2,16 @@
 
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.manager import Manager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
 User = get_user_model()
+redis_con = settings.REDIS_CONNECTION
 
 
 class Question(models.Model):
@@ -18,10 +22,6 @@ class Question(models.Model):
 
     def __unicode__(self):
         return self.title
-
-    def get_vote_count(self):
-        return Vote.objects.filter(question=self).count()
-    question_vote_count = property(fget=get_vote_count)
 
     class Meta:
         ordering = ['-id']
@@ -46,14 +46,18 @@ class Item(models.Model):
     def __unicode__(self):
         return self.value
 
-    def get_vote_count(self):
-        return Vote.objects.filter(item=self).count()
-    item_vote_count = property(fget=get_vote_count)
-
 
 class PublishedManager(Manager):
-    def get_query_set(self):
-        return super(PublishedManager, self).get_query_set().filter(is_published=True)
+    def get_queryset(self):
+        return super(PublishedManager, self).get_queryset().filter(is_published=True)
+
+    def exclude_user_old_votes(self, user_id):
+        # get poll ids that user already votes, we save them in redis for reduce sql querys
+        # remember that you have to enable Redis Persistence
+        user_votes = redis_con.smembers(user_id)
+
+        # exclude user old votes from query set
+        return self.get_queryset().exclude(pk__in=user_votes)
 
 
 class Poll(models.Model):
@@ -76,7 +80,8 @@ class Poll(models.Model):
         return self.title
 
     def get_vote_count(self):
-        return Vote.objects.filter(poll=self).count()
+        return redis_con.get("poll:%s" % (self.pk))
+        # return Vote.objects.filter(poll=self).count()
     poll_vote_count = property(fget=get_vote_count)
 
 
@@ -97,3 +102,24 @@ class Vote(models.Model):
 
     def __unicode__(self):
         return self.user.username
+
+
+@receiver(post_save, sender=Vote)
+def vote_post_save_receiver(sender, instance, **kwargs):
+    pipe = redis_con.pipeline()
+
+    # save the user vote poll
+    pipe.sadd(instance.user.pk, instance.pk)
+
+    # use fo get total poll votes
+    pipe.incr("poll:%s" % (instance.pk), instance.user.pk)
+
+    # use for get poll question total votes
+    pipe.incr("poll:%s,question:%s" %
+              (instance.pk, instance.question.pk))
+
+    # use for get poll question answer total votes
+    pipe.incr("poll:%s,question:%s,answer:%s" % (
+        instance.pk, instance.question.pk, instance.item.pk), instance.user.pk)
+
+    pipe.execute()

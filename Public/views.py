@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,6 +11,9 @@ from django.utils.decorators import method_decorator
 from django.views.generic import FormView, ListView
 
 from .forms import LoginForm, PollForm
+from .models import Item, Poll, Question, Vote
+
+redis_con = settings.REDIS_CONNECTION
 
 
 class LoginView(FormView):
@@ -43,18 +50,24 @@ class LoginView(FormView):
         return redirect("public:vote")
 
 
-class VoteView(ListView):
-    # model = Poll
+class VoteView(FormView):
+    model = Poll
     template_name = "Public/vote.html"
     context_object_name = "polls"
 
-    def get_queryset(self):
-        return self.model.published.filter()
+    def get(self, request, *args, **kwargs):
+        # get polls that user does not send vote yet
+        polls = self.model.published.exclude_user_old_votes(
+            self.request.user.pk)
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context[""] =
-    #     return context
+        return render(request, self.template_name, {
+            'polls': polls
+        })
+
+    def post(self, request, *args, **kwargs):
+        return render(request, self.template_name, {
+            "polls": None
+        })
 
 
 @login_required
