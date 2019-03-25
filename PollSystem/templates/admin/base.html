@@ -9,6 +9,7 @@
 {% block extrahead %}{% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/admin.font-1520071291613.css' %}" />
+<link href="{% static 'img/favicon.png' %}" rel="shortcut icon">
 </head>
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
@@ -83,9 +84,5 @@
     {% block footer %}<div id="footer"></div>{% endblock %}
 </div>
 <!-- END Container -->
-<script src="{% static 'js/search_field.js' %}"></script>
-{% if LANGUAGE_CODE == 'fa' %}
-<script src="{% static 'js/search_field_rtl.js' %}"></script>
-{% endif %}
 </body>
 </html>
