@@ -6,16 +6,32 @@
 {% endblock title %}
 
 {% block content %}
-{% if polls %}
-    {% for poll in polls %}
-        {{ poll.get_vote_count|default:"0" }}<br>
-        {% for question in poll.questions.all %}
-            {% for answer in question.question_answers.all %}
-                {{answer.value}}
-            {% endfor %}
+<br/>
+<div class="container">
+    {% if polls %}
+        {% for poll in polls %}
+            <div class="card border-success">
+                <div class="card-header text-white bg-primary border-primary">{{ poll.title }}</div>
+                <div class="card-body text-success border-info">
+                    {% for question in poll.questions.all %}
+                        <h5 class="card-title">{{ forloop.counter }}. {{ question.title }}</h5>
+                        <div class="row no-gutters card-text text-justify text-dark">
+                            {% for answer in question.question_answers.all %}
+                                <div class="col-md-12 col-lg-6 col-xl-4 col-sm-12 text-break">
+                                    <input type="radio" name="{{ question.pk }}" id="{{ answer.pk }}" value="{{ answer.pk }}"/>
+                                    <label for="{{ answer.pk }}">{{ answer.value }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer bg-transparent border-danger">
+                    <button type="submit" class="btn btn-primary">{% trans 'Register' %}</button>
+                </div>
+            </div>
         {% endfor %}
-    {% endfor %}
-{% else %}
-    <h3>{% trans 'There is no polls Yet' %}</h3>
-{% endif %}
+    {% else %}
+        <h3>{% trans 'There is no Poll Yet' %}
+    {% endif %}
+</div>
 {% endblock content %}

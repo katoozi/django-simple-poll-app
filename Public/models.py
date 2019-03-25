@@ -14,8 +14,19 @@ User = get_user_model()
 redis_con = settings.REDIS_CONNECTION
 
 
+question_column_choices = (
+    (1, _('One Column')),
+    (2, _('Two Column')),
+    (3, _('Three Column')),
+    (4, _('Four Column')),
+    (5, _('Five Column')),
+    (6, _('Six Column'))
+)
+
+
 class Question(models.Model):
     title = models.CharField(max_length=250, verbose_name=_('Question'))
+    column = models.IntegerField(choices=question_column_choices, default=1, verbose_name=_('Answer Columns'))
 
     def __str__(self):
         return self.title
