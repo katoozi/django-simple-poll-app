@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-23 14:02+0000\n"
+"POT-Creation-Date: 2019-03-25 07:17+0000\n"
 "PO-Revision-Date: 2019-03-12 10:24+3:30\n"
 "Last-Translator: Mohammad Katoozi k2527806@gmail.com\n"
 "Language-Team: Persian\n"
@@ -18,59 +18,64 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: Poll/models.py:22
-msgid "question"
+#: Poll/models.py:22 Public/models.py:18 Public/models.py:28
+msgid "Question"
 msgstr "سوال"
 
 #: Poll/models.py:24
 msgid "date"
 msgstr "تاریخ"
 
-#: Poll/models.py:26
+#: Poll/models.py:26 Public/models.py:67
 msgid "is published"
 msgstr "پخش شده"
 
-#: Poll/models.py:33 Poll/models.py:73 Poll/templates/poll/base.html:8
+#: Poll/models.py:33 Poll/models.py:42 Poll/models.py:82
+#: Poll/templates/poll/base.html:8 Public/models.py:73 Public/models.py:90
 msgid "poll"
 msgstr "نظر سنجی"
 
-#: Poll/models.py:34
+#: Poll/models.py:34 Poll/models.py:43 Public/models.py:74
 msgid "polls"
 msgstr "نظر سنجی‌ها"
 
-#: Poll/models.py:52
+#: Poll/models.py:38 Public/models.py:64
+msgid "Poll Title"
+msgstr "عنوان نظرسنجی"
+
+#: Poll/models.py:61 Public/models.py:35
 msgid "value"
 msgstr "مقدار"
 
-#: Poll/models.py:53
+#: Poll/models.py:62 Public/models.py:36
 msgid "position"
 msgstr "موقعیت"
 
-#: Poll/models.py:56
+#: Poll/models.py:65
 msgid "answer"
 msgstr "جواب"
 
-#: Poll/models.py:57
+#: Poll/models.py:66
 msgid "answers"
 msgstr "جواب‌ها"
 
-#: Poll/models.py:75
+#: Poll/models.py:84 Public/models.py:94
 msgid "voted item"
 msgstr "گزینه انتخاب شده"
 
-#: Poll/models.py:76
+#: Poll/models.py:85 Public/models.py:97
 msgid "user's IP"
 msgstr "ای‌پی کاربر"
 
-#: Poll/models.py:78
+#: Poll/models.py:87 Public/models.py:96
 msgid "user"
 msgstr "کاربر"
 
-#: Poll/models.py:82
+#: Poll/models.py:91
 msgid "vote"
 msgstr "رائ"
 
-#: Poll/models.py:83
+#: Poll/models.py:92
 msgid "votes"
 msgstr "رائ‌ها"
 
@@ -86,6 +91,50 @@ msgstr "رائ"
 msgid "Total votes"
 msgstr "تمام رائ‌ها"
 
+#: PollSystem/templates/admin/base.html:30
+msgid "Welcome,"
+msgstr "خوش‌امدید"
+
+#: PollSystem/templates/admin/base.html:35
+msgid "View site"
+msgstr "نمایش سایت"
+
+#: PollSystem/templates/admin/base.html:40
+msgid "Documentation"
+msgstr "مستندات"
+
+#: PollSystem/templates/admin/base.html:44
+msgid "Change password"
+msgstr "گذرواژه"
+
+#: PollSystem/templates/admin/base.html:46
+msgid "Log out"
+msgstr "خروج"
+
+#: PollSystem/templates/admin/base.html:56
+msgid "Home"
+msgstr "خانه"
+
+#: Public/admin.py:49 Public/admin.py:50
+msgid "Poll System"
+msgstr "سیستم نظرسنجی"
+
+#: Public/models.py:29
+msgid "Questions"
+msgstr "سوال‌ها"
+
+#: Public/models.py:39
+msgid "Answer"
+msgstr "جواب"
+
+#: Public/models.py:40
+msgid "Answers"
+msgstr "جواب‌ها"
+
+#: Public/models.py:92
+msgid "question"
+msgstr "سوال"
+
 #: Public/templates/Public/admin_view.html:5
 msgid "Admin View"
 msgstr "مدیریت"
@@ -96,7 +145,7 @@ msgstr "ورود"
 
 #: Public/templates/Public/login.html:19
 msgid "Shamsipour Technical College"
-msgstr ""
+msgstr "دانشکده شهید شمسی پور"
 
 #: Public/templates/Public/login.html:29
 msgid "Username"
@@ -110,6 +159,9 @@ msgstr "گذرواژه"
 msgid "Remember me"
 msgstr "مرا بخاطر بسپار"
 
-#: Public/templates/Public/login.html:50
-msgid "Forgot your password?"
-msgstr "کذرواژه را فراموش کرده‌اید؟"
+#: Public/templates/Public/vote.html:19
+msgid "There is no polls Yet"
+msgstr "نظرسنجی موجود نمی‌باشد"
+
+#~ msgid "Forgot your password?"
+#~ msgstr "کذرواژه را فراموش کرده‌اید؟"

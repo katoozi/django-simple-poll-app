@@ -34,20 +34,15 @@ class ItemAdminPanel(admin.ModelAdmin):
 
 
 class VoteAdminPanel(admin.ModelAdmin):
+    # disable add permission because we don't wanto cheat on votes
     def has_add_permission(self, request):
         return False
 
     form = select2_modelform(Vote, attrs={'width': '300px'})
     model = Vote
     list_display = ['poll', 'user', 'ip', 'vote_time']
-    search_fields = [
-        'ip',
-        'vote_time',
-        'user__username',
-        'user__email',
-        'poll__title',
-        'question__title'
-    ]
+    search_fields = ['ip', 'vote_time', 'user__username',
+                     'user__email', 'poll__title', 'question__title']
     readonly_fields = ['user', 'poll', 'question', 'item', 'vote_time', 'ip']
 
 

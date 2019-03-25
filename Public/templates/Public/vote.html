@@ -6,11 +6,16 @@
 {% endblock title %}
 
 {% block content %}
+{% if polls %}
     {% for poll in polls %}
+        {{ poll.get_vote_count|default:"0" }}<br>
         {% for question in poll.questions.all %}
             {% for answer in question.question_answers.all %}
                 {{answer.value}}
             {% endfor %}
         {% endfor %}
     {% endfor %}
+{% else %}
+    <h3>{% trans 'There is no polls Yet' %}</h3>
+{% endif %}
 {% endblock content %}

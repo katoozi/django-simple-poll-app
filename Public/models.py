@@ -111,7 +111,7 @@ def vote_post_save_receiver(sender, instance, **kwargs):
     # save the user vote poll
     pipe.sadd(instance.user.pk, instance.pk)
 
-    # use fo get total poll votes
+    # use for get total poll votes
     pipe.incr("poll:%s" % (instance.pk), instance.user.pk)
 
     # use for get poll question total votes

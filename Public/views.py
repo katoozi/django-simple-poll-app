@@ -47,16 +47,23 @@ class LoginView(FormView):
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
         login(request, user_obj)
+        
+        # redirect to next url arg if it exist in url
+        if request.GET.get("next", None):
+            return redirect(request.GET["next"])
+        
+        # default redirect to vote page
         return redirect("public:vote")
 
 
+@method_decorator(login_required, name="dispatch")
 class VoteView(FormView):
     model = Poll
     template_name = "Public/vote.html"
     context_object_name = "polls"
 
     def get(self, request, *args, **kwargs):
-        # get polls that user does not send vote yet
+        # get polls that user does not send vote yet and published polls
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)
 
