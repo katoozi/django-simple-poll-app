@@ -21,9 +21,9 @@ class ItemForQuestionInline(admin.TabularInline):
 
 class QuestionAdminPanel(admin.ModelAdmin):
     model = Question
-    list_display = ['title']
+    list_display = ['title', 'column']
     inlines = [ItemForQuestionInline, ]
-    search_fields = ['title']
+    search_fields = ['title', 'column']
 
 
 class ItemAdminPanel(admin.ModelAdmin):
