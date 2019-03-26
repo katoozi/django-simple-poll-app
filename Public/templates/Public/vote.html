@@ -21,8 +21,8 @@
                         <div class="row no-gutters card-text text-justify text-dark">
                             {% for answer in question.question_answers.all %}
                                 <div style="padding-left: 30px;" class="col-md-12 col-lg-{{ 12|intdiv:question.column }} col-xl-{{ 12|intdiv:question.column }} col-sm-12">
-                                    <label for="{{ question.pk }}:{{ answer.pk }}">
-                                        <input class='input' name="{{ question.pk }}:{{ answer.pk }}" type='radio' value="{{ question.pk }}:{{ answer.pk }}" id='{{ question.pk }}:{{ answer.pk }}'>
+                                    <label for="{{ poll.id }}:{{ question.pk }}:{{ answer.pk }}">
+                                        <input class='input' name="{{ poll.id }}:{{ question.pk }}" type='radio' value="{{ answer.pk }}" id='{{ poll.id }}:{{ question.pk }}:{{ answer.pk }}'>
                                         <span class='label'>{{ answer.value }}</span>
                                     </label>
                                 </div>
