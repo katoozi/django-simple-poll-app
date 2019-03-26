@@ -17,7 +17,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Poll',
     'Public',
     'easy_select2',
     'smart_selects',
@@ -57,6 +56,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'PollSystem.wsgi.application'
 
+""" 
+Redis Databases:
+    0 => user and poll system data
+    1 => user login sessions
+"""
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # used for enable remember me on login page
 SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS = {
     'host': 'localhost',
@@ -100,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'fa'
+LANGUAGE_CODE = 'en'
 LANGUAGES = (
     ('en-us', 'English'),
     ('fa', 'Persian')
@@ -123,3 +129,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'assets', 'media')
 
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+LOGIN_URL = '/'
