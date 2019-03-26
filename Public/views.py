@@ -72,8 +72,11 @@ class VoteView(FormView):
         })
 
     def post(self, request, *args, **kwargs):
+        # TODO: create code for handle the items in questions
+        polls = self.model.published.exclude_user_old_votes(
+            self.request.user.pk)
         return render(request, self.template_name, {
-            "polls": None
+            "polls": polls
         })
 
 

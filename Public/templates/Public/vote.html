@@ -10,6 +10,9 @@
 <div class="container">
     {% if polls %}
         {% for poll in polls %}
+        <form method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" value="{{ poll.id }}" name="poll_id" />
             <div class="card border-success" style="margin-bottom: 30px">
                 <div class="card-header text-white bg-primary border-primary">{{ poll.title }}</div>
                 <div class="card-body text-success border-info">
@@ -31,6 +34,7 @@
                     <button type="submit" class="btn btn-primary">{% trans 'Register' %}</button>
                 </div>
             </div>
+        </form>
         {% endfor %}
     {% else %}
         <h3>{% trans 'There is no Poll Yet' %}
