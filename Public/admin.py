@@ -34,9 +34,17 @@ class ItemAdminPanel(admin.ModelAdmin):
 
 
 class VoteAdminPanel(admin.ModelAdmin):
-    # disable add permission because we don't wanto cheat on votes
+    # disable add permission because we don't wan to cheat on votes
     def has_add_permission(self, request):
         return False
+
+    # disable delete permission because we don't wan to cheat on votes
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    # remove delete action from vote model actions because we don't have delete permission anymore
+    def get_actions(self, request):
+        return []
 
     form = select2_modelform(Vote, attrs={'width': '300px'})
     model = Vote

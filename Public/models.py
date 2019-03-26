@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.manager import Manager
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
@@ -26,7 +26,8 @@ question_column_choices = (
 
 class Question(models.Model):
     title = models.CharField(max_length=250, verbose_name=_('Question'))
-    column = models.IntegerField(choices=question_column_choices, default=1, verbose_name=_('Answer Columns'))
+    column = models.IntegerField(
+        choices=question_column_choices, default=1, verbose_name=_('Answer Columns'))
 
     def __str__(self):
         return self.title
@@ -120,17 +121,36 @@ def vote_post_save_receiver(sender, instance, **kwargs):
     pipe = redis_con.pipeline()
 
     # save the user vote poll
-    pipe.sadd(instance.user.pk, instance.pk)
+    pipe.sadd(instance.user_id, instance.pk)
 
     # use for get total poll votes
-    pipe.incr("poll:%s" % (instance.pk), instance.user.pk)
+    pipe.incr("poll:%s" % (instance.pk))
 
     # use for get poll question total votes
-    pipe.incr("poll:%s,question:%s" %
-              (instance.pk, instance.question.pk))
+    pipe.incr("poll:%s,question:%s" % (instance.pk, instance.question_id))
 
     # use for get poll question answer total votes
-    pipe.incr("poll:%s,question:%s,answer:%s" % (
-        instance.pk, instance.question.pk, instance.item.pk), instance.user.pk)
+    pipe.incr("poll:%s,question:%s,answer:%s" %
+              (instance.pk, instance.question_id, instance.item_id))
+
+    pipe.execute()
+
+
+@receiver(post_delete, sender=Vote)
+def vote_post_delete_receiver(sender, instance, **kwargs):
+    pipe = redis_con.pipeline()
+
+    # save the user vote poll
+    pipe.srem(instance.user_id, instance.pk)
+
+    # use for get total poll votes
+    pipe.decr("poll:%s" % (instance.pk))
+
+    # use for get poll question total votes
+    pipe.decr("poll:%s,question:%s" % (instance.pk, instance.question_id))
+
+    # use for get poll question answer total votes
+    pipe.decr("poll:%s,question:%s,answer:%s" %
+              (instance.pk, instance.question_id, instance.item_id))
 
     pipe.execute()
