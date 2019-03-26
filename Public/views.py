@@ -47,11 +47,11 @@ class LoginView(FormView):
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
         login(request, user_obj)
-        
+
         # redirect to next url arg if it exist in url
         if request.GET.get("next", None):
             return redirect(request.GET["next"])
-        
+
         # default redirect to vote page
         return redirect("public:vote")
 
@@ -66,14 +66,77 @@ class VoteView(FormView):
         # get polls that user does not send vote yet and published polls
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)
+        print(polls)
 
         return render(request, self.template_name, {
             'polls': polls
         })
 
     def post(self, request, *args, **kwargs):
+        # convert request.POST QueryDict to dict
+        post_data = request.POST.dict()
+
+        # pop(remove) the csrf token from request.POST data
+        post_data.pop("csrfmiddlewaretoken", None)
+
+        polls = self.model.published.exclude_user_old_votes(
+            self.request.user.pk)
+
+        poll_id = post_data.get('poll_id', None)
+        if not poll_id:
+            return render(request, self.template_name, {
+                "polls": polls
+            })
+
+        try:
+            poll = polls.get(pk=poll_id)
+        except Poll.DoesNotExist:
+            return render(request, self.template_name, {
+                "polls": polls
+            })
+        
+        queries = []
+
+        poll_questions = poll.questions.all()
+        for question in poll_questions:
+            key = "%s:%s" % (poll_id, question.id)
+            answer_id = post_data.get(key, None)
+            if not answer_id:
+                return render(request, self.template_name, {
+                    "polls": polls
+                })
+            question_answers = question.question_answers.all()
+
+            try:
+                answer = question_answers.get(id=answer_id)
+            except Item.DoesNotExist:
+                return render(request, self.template_name, {
+                    "polls": polls
+                })
+            # Vote.objects.create(user=request.user, poll=poll, question=question, item=answer, ip="127.0.0.1")
+            queries.append(
+                {
+                    "poll": poll,
+                    "user": request.user,
+                    "question": question,
+                    "item": answer,
+                    "ip": request.META['REMOTE_ADDR']
+                }
+            )
+        
+        # save the user vote poll
+        redis_con.sadd("user:%s" % request.user.id, poll_id)
+
+        # # use for get total poll votes
+        redis_con.incr("poll:%s" % poll_id)
+
+        for query in queries:
+            Vote.objects.create(**query)
+
+        polls = self.model.published.exclude_user_old_votes(
+            self.request.user.pk)
         return render(request, self.template_name, {
-            "polls": None
+            "polls": polls
         })
 
 
