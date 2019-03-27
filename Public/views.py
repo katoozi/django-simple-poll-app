@@ -142,7 +142,8 @@ class VoteView(FormView):
 @method_decorator(login_required, name="dispatch")
 class VoteResultView(ListView):
     model = Poll
-    template_name = ""
+    template_name = "Public/result_view.html"
+    context_object_name = "polls"
 
     def get_queryset(self):
         return Poll.objects.all()

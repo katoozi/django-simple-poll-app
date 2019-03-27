@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load i18n static mathfilters %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block title %}
+    {% trans 'Vote Results' %}
+{% endblock title %}
+
+{% block css_files %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.1.0/css/flag-icon.min.css" rel="stylesheet">
+{% endblock css_files %}
+
+{% block content %}
+    <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+        <div class="collapse navbar-collapse" id="navbarsExample09">
+            {% if LANGUAGE_CODE == "fa" %}
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="{% url 'public:vote' %}" id="dropdown09"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
+                                class="flag-icon flag-icon-ir"> </span> {% trans 'Persian' %}</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown09">
+                            <a onClick="document.set_en_lang.submit();" class="dropdown-item" href="#us"><span
+                                    class="flag-icon flag-icon-us"> </span> English</a>
+                        </div>
+                    </li>
+                </ul>
+                <form class="d.none" name="set_en_lang" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="language" value="en">
+                </form>
+            {% else %}
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="{% url 'public:vote' %}" id="dropdown09"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
+                                class="flag-icon flag-icon-us"> </span> {% trans 'English' %}</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown09">
+                            <a onClick="document.set_fa_lang.submit();" class="dropdown-item" href="#ir"><span
+                                    class="flag-icon flag-icon-ir"> </span> فارسی</a>
+                        </div>
+                    </li>
+                </ul>
+                <form class="d.none" name="set_fa_lang" action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="language" value="fa">
+                </form>
+            {% endif %}
+        </div>
+    </nav>
+
+
+    {% if polls %}
+        <div id="accordion">
+            {% for poll in polls %}
+                <div class="card">
+                    <div class="card-header" id="poll{{ poll.id }}">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
+                                {{ forloop.counter }}. {{ poll.title }}
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse{{ poll.id }}" class="collapse" aria-labelledby="poll{{ poll.id }}" data-parent="#accordion">
+                        <div class="card-body">
+                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-success text-center" role="alert">
+            {% trans 'There is no Poll Yet' %}
+        </div>
+    {% endif %}
+    <div style="margin-bottom: 10px;margin-top: 10px" class=" text-center">
+        <a href="{% url "public:logout" %}" class="btn btn-primary col-sm-12 col-lg-12 col-md-12 col-xl-12 col-sm-12">
+            {% trans 'Logout' %}
+        </a>
+    </div>
+</div>
+{% endblock content %}
+{% block js_files %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+{% endblock js_files %}
