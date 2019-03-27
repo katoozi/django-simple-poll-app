@@ -8,11 +8,12 @@ import random
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.transaction import atomic
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView, ListView
-from django.urls import reverse
 
 from .forms import LoginForm
 from .models import Item, Poll, Question, Vote
@@ -152,8 +153,9 @@ class VoteView(FormView):
         # # use for get total poll votes
         redis_con.incr("poll:%s" % poll_id)
 
-        for query in queries:
-            Vote.objects.create(**query)
+        with atomic():
+            for query in queries:
+                Vote.objects.create(**query)
 
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)

@@ -21,23 +21,23 @@
                 <div class="card">
                     <div class="card-header" id="poll{{ poll.id }}">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-6 col-lg-6 col-sm-12">
                                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
                                     {{ forloop.counter }}. {{ poll.title }}
                                 </button>
                             </div>
-                            <div class="col-md-4 text-right">
+                            <div class="col-md-4 col-lg-4 col-sm-12 text-right">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
+                                    {% trans 'Total Votes' %}: {{ poll.poll_vote_count|default:"0" }}
+                                </button>
+                            </div>
+                            <div class="col-md-2 col-lg-2 col-sm-12 text-right">
                                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
                                     {% if poll.is_published %}
                                         {% trans 'Status' %}: {% trans 'Open' %}
                                     {% else %}
                                         {% trans 'Status' %}: {% trans 'Close' %}
                                     {% endif %}
-                                </button>
-                            </div>
-                            <div class="col-md-2 text-right">
-                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
-                                    {% trans 'Total Votes' %}: {{ poll.poll_vote_count|default:"0" }}
                                 </button>
                             </div>
                         </div>
