@@ -140,6 +140,15 @@ class VoteView(FormView):
         })
 
 
+@method_decorator(login_required, name="dispatch")
+class VoteResultView(ListView):
+    model = Poll
+    template_name = ""
+
+    def get_queryset(self):
+        return Poll.objects.all()
+
+
 @login_required
 def logout_view(request):
     logout(request)
