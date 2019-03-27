@@ -66,7 +66,6 @@ class VoteView(FormView):
         # get polls that user does not send vote yet and published polls
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)
-        print(polls)
 
         return render(request, self.template_name, {
             'polls': polls
@@ -138,6 +137,15 @@ class VoteView(FormView):
         return render(request, self.template_name, {
             "polls": polls
         })
+
+
+@method_decorator(login_required, name="dispatch")
+class VoteResultView(ListView):
+    model = Poll
+    template_name = ""
+
+    def get_queryset(self):
+        return Poll.objects.all()
 
 
 @login_required
