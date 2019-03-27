@@ -61,8 +61,8 @@
                             <div class="dropdown-menu" aria-labelledby="dropdown10">
                                 <a class="dropdown-item" href="{% url 'public:view_result' chart_type='pie' %}">{% trans 'Pie' %}</a>
                                 <a class="dropdown-item" href="{% url 'public:view_result' chart_type='bar' %}">{% trans 'Bar' %}</a>
-                                <a class="dropdown-item" href="{% url 'public:view_result' chart_type='polarArea' %}">{% trans 'Polar' %}</a>
-                                <a class="dropdown-item" href="{% url 'public:view_result' chart_type='radar' %}">{% trans 'Radar' %}</a>
+                                {% comment %} <a class="dropdown-item" href="{% url 'public:view_result' chart_type='polarArea' %}">{% trans 'Polar' %}</a>
+                                <a class="dropdown-item" href="{% url 'public:view_result' chart_type='radar' %}">{% trans 'Radar' %}</a> {% endcomment %}
                             </div>
                         </li>
                     </ul>
@@ -93,8 +93,8 @@
                             <div class="dropdown-menu" aria-labelledby="dropdown10">
                                 <a class="dropdown-item" href="{% url 'public:view_result' chart_type='pie' %}">{% trans 'Pie' %}</a>
                                 <a class="dropdown-item" href="{% url 'public:view_result' chart_type='bar' %}">{% trans 'Bar' %}</a>
-                                <a class="dropdown-item" href="{% url 'public:view_result' chart_type='polarArea' %}">{% trans 'Polar' %}</a>
-                                <a class="dropdown-item" href="{% url 'public:view_result' chart_type='radar' %}">{% trans 'Radar' %}</a>
+                                {% comment %} <a class="dropdown-item" href="{% url 'public:view_result' chart_type='polarArea' %}">{% trans 'Polar' %}</a>
+                                <a class="dropdown-item" href="{% url 'public:view_result' chart_type='radar' %}">{% trans 'Radar' %}</a> {% endcomment %}
                             </div>
                         </li>
                     </ul>

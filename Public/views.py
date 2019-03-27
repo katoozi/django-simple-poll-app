@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import json
+import random
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -12,7 +13,7 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView, ListView
 
-from .forms import LoginForm, JsonGeneratorForm
+from .forms import LoginForm
 from .models import Item, Poll, Question, Vote
 
 redis_con = settings.REDIS_CONNECTION
@@ -165,25 +166,52 @@ class VoteResultView(ListView):
 class VoteResultJsonGenerator(FormView):
     model = Poll
     http_method_names = ['get']
-    form_class = JsonGeneratorForm
 
     def get(self, request, *args, **kwargs):
+        poll_id = self.kwargs['poll_id']
+        question_id = self.kwargs['question_id']
+
+        try:
+            poll = Poll.objects.get(id=poll_id)
+        except Poll.DoesNotExist:
+            return JsonResponse({"Error": "Poll With That Id Does not Exist."})
+
+        try:
+            question = poll.questions.get(id=question_id)
+        except Question.DoesNotExist:
+            return JsonResponse({"Error": "Question With That Id Does not belong to This Poll"})
+
+        answer_objects = question.question_answers.all()
+
+        labels = [answer.value[:20] for answer in answer_objects]
+
+        data = []
+        for answer in answer_objects:
+            result = answer.get_vote_count(poll_id, question_id)
+            if result is None:
+                data.append(0)
+            else:
+                data.append(result.decode("utf-8"))
+
+
+        backgroundColor = ["rgb(%s, %s, %s)" % (
+            random.randrange(0, 255, 1),
+            random.randrange(0, 255, 1),
+            random.randrange(0, 255, 1),
+        ) for color in range(len(data))]
+
         data = {
-            "labels": ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            "labels": labels,
             "datasets": [
                 {
-                    'label': '#1',
-                    'data': [0, 10, 5, 2, 20, 30, 15],
-                    "backgroundColor":[
-                        "rgb(255, 99, 132)",
-                        "rgb(54, 162, 235)",
-                        "rgb(255, 205, 86)",
-                        "rgb(255, 205, 100)",
-                        "rgb(255, 205, 150)",
-                        "rgb(255, 205, 200)",
-                        "rgb(255, 205, 230)",
-                    ],
-                    'borderColor': 'rgb(0, 0, 132)',
+                    'label': question.title,
+                    'data': data,
+                    "backgroundColor": backgroundColor,
+                    'borderColor': 'rgb(%s, %s, %s)' % (
+                        random.randrange(0, 255, 1),
+                        random.randrange(0, 255, 1),
+                        random.randrange(0, 255, 1),
+                    ),
                     'borderAlign': "center"
                 },
             ]

@@ -37,7 +37,7 @@
                             </div>
                             <div class="col-md-2 text-right">
                                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
-                                    {% trans 'Total Votes' %}: {{ poll.poll_vote_count }}
+                                    {% trans 'Total Votes' %}: {{ poll.poll_vote_count|default:"0" }}
                                 </button>
                             </div>
                         </div>
@@ -75,9 +75,20 @@
             $("#" + convas_placeholder).append(newCanvas);
 
             var ctx = $("#" + convas_id).get(0).getContext("2d");
-            
+
             new Chart(ctx, {
-                    type: '{{ chart_type }}', data: data
+                    type: '{{ chart_type }}', data: data, 
+                    options: {
+                        scales:{
+                            yAxes: [{
+                                ticks: {
+                                    max: 3,
+                                    min: 0,
+                                    stepSize: 1
+                                }
+                            }]
+                        }
+                    }
             });
             $("#" + question_id + "-" + poll_id).hide();
         })
