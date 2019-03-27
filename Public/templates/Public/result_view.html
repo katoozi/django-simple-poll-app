@@ -13,59 +13,38 @@
 
 {% block content %}
     <div class="container">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
-        <div class="collapse navbar-collapse" id="navbarsExample09">
-            {% if LANGUAGE_CODE == "fa" %}
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{% url 'public:vote' %}" id="dropdown09"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
-                                class="flag-icon flag-icon-ir"> </span> {% trans 'Persian' %}</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown09">
-                            <a onClick="document.set_en_lang.submit();" class="dropdown-item" href="#us"><span
-                                    class="flag-icon flag-icon-us"> </span> English</a>
-                        </div>
-                    </li>
-                </ul>
-                <form class="d.none" name="set_en_lang" action="{% url 'set_language' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="language" value="en">
-                </form>
-            {% else %}
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{% url 'public:vote' %}" id="dropdown09"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
-                                class="flag-icon flag-icon-us"> </span> {% trans 'English' %}</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown09">
-                            <a onClick="document.set_fa_lang.submit();" class="dropdown-item" href="#ir"><span
-                                    class="flag-icon flag-icon-ir"> </span> فارسی</a>
-                        </div>
-                    </li>
-                </ul>
-                <form class="d.none" name="set_fa_lang" action="{% url 'set_language' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="language" value="fa">
-                </form>
-            {% endif %}
-        </div>
-    </nav>
-
+    {% include 'Components/nav.html' with transparent=False charts=True %}
 
     {% if polls %}
-        <div id="accordion">
+        <div id="polls">
             {% for poll in polls %}
                 <div class="card">
                     <div class="card-header" id="poll{{ poll.id }}">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
-                                {{ forloop.counter }}. {{ poll.title }}
-                            </button>
-                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
+                                    {{ forloop.counter }}. {{ poll.title }}
+                                </button>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
+                                    {% if poll.is_published %}
+                                        {% trans 'Status' %}: {% trans 'Open' %}
+                                    {% else %}
+                                        {% trans 'Status' %}: {% trans 'Close' %}
+                                    {% endif %}
+                                </button>
+                            </div>
+                            <div class="col-md-2 text-right">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ poll.id }}" aria-expanded="true" aria-controls="collapse{{ poll.id }}">
+                                    {% trans 'Total Votes' %}: {{ poll.poll_vote_count }}
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div id="collapse{{ poll.id }}" class="collapse" aria-labelledby="poll{{ poll.id }}" data-parent="#accordion">
+                    <div id="collapse{{ poll.id }}" class="collapse" aria-labelledby="poll{{ poll.id }}" data-parent="#polls">
                         <div class="card-body">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            {% include 'Components/card.html' with questions=poll.questions.all poll=poll %}
                         </div>
                     </div>
                 </div>
@@ -85,4 +64,23 @@
 {% endblock content %}
 {% block js_files %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script>
+    function get_data_from_server(server_address, poll_id, question_id){
+        $.get(server_address, function(data) {
+        }).done(function(data) {
+            convas_id = "chart_for_" + question_id + "_of_" + poll_id;
+            convas_placeholder = "convas_placeholder-" + question_id + "-" + poll_id;
+
+            var newCanvas = $('<canvas/>',{'id': convas_id}).width(200).height(100);
+            $("#" + convas_placeholder).append(newCanvas);
+
+            var ctx = $("#" + convas_id).get(0).getContext("2d");
+            
+            new Chart(ctx, {
+                    type: '{{ chart_type }}', data: data
+            });
+            $("#" + question_id + "-" + poll_id).hide();
+        })
+    }
+</script>
 {% endblock js_files %}

@@ -8,5 +8,6 @@ class LoginForm(forms.Form):
     remember_me = forms.CharField(widget=forms.CheckboxInput, required=False)
 
 
-class PollForm(forms.Form):
-    pass
+class JsonGeneratorForm(forms.Form):
+    poll_id = forms.IntegerField(required=True)
+    question_id = forms.IntegerField(required=True)

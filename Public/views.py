@@ -2,15 +2,17 @@
 
 from __future__ import unicode_literals
 
+import json
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView, ListView
 
-from .forms import LoginForm, PollForm
+from .forms import LoginForm, JsonGeneratorForm
 from .models import Item, Poll, Question, Vote
 
 redis_con = settings.REDIS_CONNECTION
@@ -93,7 +95,7 @@ class VoteView(FormView):
             return render(request, self.template_name, {
                 "polls": polls
             })
-        
+
         queries = []
 
         poll_questions = poll.questions.all()
@@ -122,7 +124,7 @@ class VoteView(FormView):
                     "ip": request.META['REMOTE_ADDR']
                 }
             )
-        
+
         # save the user vote poll
         redis_con.sadd("user:%s" % request.user.id, poll_id)
 
@@ -144,9 +146,49 @@ class VoteResultView(ListView):
     model = Poll
     template_name = "Public/result_view.html"
     context_object_name = "polls"
+    chart_types = ['pie', 'bar', 'radar', 'polarArea']
 
     def get_queryset(self):
         return Poll.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        chart_type = self.kwargs['chart_type']
+        if chart_type in self.chart_types:
+            context['chart_type'] = chart_type
+        else:
+            context['chart_type'] = "pie"
+        return context
+
+
+@method_decorator(login_required, name="dispatch")
+class VoteResultJsonGenerator(FormView):
+    model = Poll
+    http_method_names = ['get']
+    form_class = JsonGeneratorForm
+
+    def get(self, request, *args, **kwargs):
+        data = {
+            "labels": ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            "datasets": [
+                {
+                    'label': '#1',
+                    'data': [0, 10, 5, 2, 20, 30, 15],
+                    "backgroundColor":[
+                        "rgb(255, 99, 132)",
+                        "rgb(54, 162, 235)",
+                        "rgb(255, 205, 86)",
+                        "rgb(255, 205, 100)",
+                        "rgb(255, 205, 150)",
+                        "rgb(255, 205, 200)",
+                        "rgb(255, 205, 230)",
+                    ],
+                    'borderColor': 'rgb(0, 0, 132)',
+                    'borderAlign': "center"
+                },
+            ]
+        }
+        return JsonResponse(data)
 
 
 @login_required
