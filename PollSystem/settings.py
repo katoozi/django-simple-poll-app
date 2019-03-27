@@ -28,7 +28,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'PollSystem.middleware.language_control.LanguageObject',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'PollSystem.middleware.language_control.LanguageControl',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -108,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en'
 LANGUAGES = (
-    ('en-us', 'English'),
+    ('en', 'English'),
     ('fa', 'Persian')
 )
 
@@ -116,7 +119,7 @@ LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'PollSystem', 'locale'),
 )
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
