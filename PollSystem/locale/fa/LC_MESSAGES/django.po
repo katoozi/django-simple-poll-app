@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-27 12:41+0430\n"
+"POT-Creation-Date: 2019-03-27 18:54+0430\n"
 "PO-Revision-Date: 2019-03-12 10:24+3:30\n"
 "Last-Translator: Mohammad Katoozi k2527806@gmail.com\n"
 "Language-Team: Persian\n"
@@ -130,39 +130,70 @@ msgstr "کاربر"
 msgid "user's IP"
 msgstr "ای‌پی کاربر"
 
-#: Public/templates/Public/admin_view.html:5
-msgid "Admin View"
-msgstr "مدیریت"
+#: Public/templates/Components/card.html:27
+msgid "This Poll Does not have Question Yet."
+msgstr "سوالی برای این نظرسنجی درنظر گرفته نشده است"
 
-#: Public/templates/Public/login.html:7 Public/templates/Public/login.html:95
-msgid "Login"
-msgstr "ورود"
-
-#: Public/templates/Public/login.html:26 Public/templates/Public/vote.html:23
-#: Public/templates/Public/vote.html:42
+#: Public/templates/Components/nav.html:10
+#: Public/templates/Components/nav.html:48 Public/templates/Public/vote.html:23
 msgid "Persian"
 msgstr "فارسی"
 
-#: Public/templates/Public/login.html:42 Public/templates/Public/vote.html:26
-#: Public/templates/Public/vote.html:39
+#: Public/templates/Components/nav.html:26
+#: Public/templates/Components/nav.html:64 Public/templates/Public/vote.html:39
 msgid "English"
 msgstr "انگلیسی"
 
-#: Public/templates/Public/login.html:62 Public/templates/Public/login.html:63
+#: Public/templates/Public/login.html:7 Public/templates/Public/login.html:59
+msgid "Login"
+msgstr "ورود"
+
+#: Public/templates/Public/login.html:26 Public/templates/Public/login.html:27
 msgid "Shamsipour Technical College"
 msgstr "دانشکده شهید شمسی پور"
 
-#: Public/templates/Public/login.html:74
+#: Public/templates/Public/login.html:38
 msgid "Username"
 msgstr "نام‌کاربری"
 
-#: Public/templates/Public/login.html:81
+#: Public/templates/Public/login.html:45
 msgid "Password"
 msgstr "گذرواژه"
 
-#: Public/templates/Public/login.html:88
+#: Public/templates/Public/login.html:52
 msgid "Remember me"
 msgstr "مرا بخاطر بسپار"
+
+#: Public/templates/Public/result_view.html:7
+msgid "Vote Results"
+msgstr "نتایج نظرسنجی‌ها"
+
+#: Public/templates/Public/result_view.html:32
+#: Public/templates/Public/result_view.html:34
+msgid "Status"
+msgstr "وضعیت"
+
+#: Public/templates/Public/result_view.html:32
+msgid "Open"
+msgstr "باز"
+
+#: Public/templates/Public/result_view.html:34
+msgid "Close"
+msgstr "بسته"
+
+#: Public/templates/Public/result_view.html:40
+msgid "Total Votes"
+msgstr "تمام رائ‌ها"
+
+#: Public/templates/Public/result_view.html:55
+#: Public/templates/Public/vote.html:86
+msgid "There is no Poll Yet"
+msgstr "نظرسنجی موجود نمی‌باشد"
+
+#: Public/templates/Public/result_view.html:60
+#: Public/templates/Public/vote.html:91
+msgid "Logout"
+msgstr "خروج"
 
 #: Public/templates/Public/vote.html:5
 msgid "Vote"
@@ -172,13 +203,8 @@ msgstr "رائ"
 msgid "Register"
 msgstr "ثبت"
 
-#: Public/templates/Public/vote.html:86
-msgid "There is no Poll Yet"
-msgstr "نظرسنجی موجود نمی‌باشد"
-
-#: Public/templates/Public/vote.html:91
-msgid "Logout"
-msgstr "خروج"
+#~ msgid "Admin View"
+#~ msgstr "مدیریت"
 
 #~ msgid "date"
 #~ msgstr "تاریخ"
@@ -197,9 +223,6 @@ msgstr "خروج"
 
 #~ msgid "Please, select an answer"
 #~ msgstr "لطفا پاسخ را انتخاب کنید"
-
-#~ msgid "Total votes"
-#~ msgstr "تمام رائ‌ها"
 
 #~ msgid "Forgot your password?"
 #~ msgstr "کذرواژه را فراموش کرده‌اید؟"

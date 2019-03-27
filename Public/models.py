@@ -58,6 +58,9 @@ class Item(models.Model):
     def __unicode__(self):
         return self.value
 
+    def get_vote_count(self, poll_id, question_id):
+        return redis_con.get("poll:%s,question:%s,answer:%s" % (poll_id, question_id, self.id))
+
 
 class PublishedManager(Manager):
     def get_queryset(self):
