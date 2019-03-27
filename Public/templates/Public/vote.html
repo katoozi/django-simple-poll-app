@@ -2,44 +2,91 @@
 {% load i18n static mathfilters %}
 
 {% block title %}
-    {% trans 'Vote' %}
+{% trans 'Vote' %}
 {% endblock title %}
 
+{% get_current_language as LANGUAGE_CODE %}
+
+{% block css_files %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.1.0/css/flag-icon.min.css" rel="stylesheet">
+{% endblock css_files %}
+
 {% block content %}
-<br/>
 <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded">
+        <div class="collapse navbar-collapse" id="navbarsExample09">
+            {% if LANGUAGE_CODE == "fa" %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'public:vote' %}" id="dropdown09"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
+                            class="flag-icon flag-icon-ir"> </span> {% trans 'Persian' %}</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown09">
+                        <a onClick="document.set_en_lang.submit();" class="dropdown-item" href="#us"><span
+                                class="flag-icon flag-icon-us"> </span> {% trans 'English' %}</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="d.none" name="set_en_lang" action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="en">
+            </form>
+            {% else %}
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{% url 'public:vote' %}" id="dropdown09"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
+                            class="flag-icon flag-icon-us"> </span> {% trans 'English' %}</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown09">
+                        <a onClick="document.set_fa_lang.submit();" class="dropdown-item" href="#ir"><span
+                                class="flag-icon flag-icon-ir"> </span> {% trans 'Persian' %}</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="d.none" name="set_fa_lang" action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="fa">
+            </form>
+            {% endif %}
+        </div>
+    </nav>
+
     {% if polls %}
-        {% for poll in polls %}
-        <form method="post" action="">
-            {% csrf_token %}
-            <input type="hidden" value="{{ poll.id }}" name="poll_id" />
-            <div class="card border-success" style="margin-bottom: 30px">
-                <div class="card-header text-white bg-primary border-primary">{{ poll.title }}</div>
-                <div class="card-body text-success border-info">
-                    {% for question in poll.questions.all %}
-                        <h5 class="card-title">{{ forloop.counter }}. {{ question.title }}</h5>
-                        <div class="row no-gutters card-text text-justify text-dark">
-                            {% for answer in question.question_answers.all %}
-                                <div style="padding-left: 30px;" class="col-md-12 col-lg-{{ 12|intdiv:question.column }} col-xl-{{ 12|intdiv:question.column }} col-sm-12">
-                                    <label for="{{ poll.id }}:{{ question.pk }}:{{ answer.pk }}">
-                                        <input class='input' name="{{ poll.id }}:{{ question.pk }}" type='radio' value="{{ answer.pk }}" id='{{ poll.id }}:{{ question.pk }}:{{ answer.pk }}'>
-                                        <span class='label'>{{ answer.value }}</span>
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        </div>
+    {% for poll in polls %}
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" value="{{ poll.id }}" name="poll_id" />
+        <div class="card border-success" style="margin-bottom: 30px">
+            <div class="card-header text-white bg-primary border-primary">{{ poll.title }}</div>
+            <div class="card-body text-success border-info">
+                {% for question in poll.questions.all %}
+                <h5 class="card-title">{{ forloop.counter }}. {{ question.title }}</h5>
+                <div class="row no-gutters card-text text-justify text-dark">
+                    {% for answer in question.question_answers.all %}
+                    <div style="padding-left: 30px;"
+                        class="col-md-12 col-lg-{{ 12|intdiv:question.column }} col-xl-{{ 12|intdiv:question.column }} col-sm-12">
+                        <label for="{{ poll.id }}:{{ question.pk }}:{{ answer.pk }}">
+                            <input class='input' name="{{ poll.id }}:{{ question.pk }}" type='radio'
+                                value="{{ answer.pk }}" id='{{ poll.id }}:{{ question.pk }}:{{ answer.pk }}'>
+                            <span class='label'>{{ answer.value }}</span>
+                        </label>
+                    </div>
                     {% endfor %}
                 </div>
-                <div class="card-footer bg-transparent border-danger">
-                    <button type="submit" class="btn btn-primary">{% trans 'Register' %}</button>
-                </div>
+                {% endfor %}
             </div>
-        </form>
-        {% endfor %}
+            <div class="card-footer bg-transparent border-danger">
+                <button type="submit" class="btn btn-primary">{% trans 'Register' %}</button>
+            </div>
+        </div>
+    </form>
+    {% endfor %}
     {% else %}
-        <h3>{% trans 'There is no Poll Yet' %}
+    <div class="alert alert-success text-center" role="alert">
+        {% trans 'There is no Poll Yet' %}
+    </div>
     {% endif %}
-    <div  style="margin-bottom: 10px" class=" text-center">
+    <div style="margin-bottom: 10px" class=" text-center">
         <a href="{% url "public:logout" %}" class="btn btn-primary col-sm-12 col-lg-12 col-md-12 col-xl-12 col-sm-12">
             {% trans 'Logout' %}
         </a>
