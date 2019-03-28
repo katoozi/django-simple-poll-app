@@ -51,7 +51,7 @@ class LoginView(FormView):
             return render(request, self.template_name, {
                 "form": form_data
             })
-        
+
         if not user_obj.is_active:
             # user is disabled and it's not allowed to login
             return render(request, self.template_name, {
@@ -84,7 +84,7 @@ class VoteView(FormView):
     def get(self, request, *args, **kwargs):
         # get polls that user does not send vote yet and published polls
         if request.user.is_superuser and request.user.is_staff:
-                return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)
 
@@ -94,7 +94,7 @@ class VoteView(FormView):
 
     def post(self, request, *args, **kwargs):
         if request.user.is_superuser and request.user.is_staff:
-                return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
 
         # convert request.POST QueryDict to dict
         post_data = request.POST.dict()
@@ -173,7 +173,7 @@ class VoteResultView(ListView):
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_superuser or not request.user.is_staff:
-                return redirect("public:vote")
+            return redirect("public:vote")
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -196,7 +196,7 @@ class VoteResultJsonGenerator(FormView):
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_superuser or not request.user.is_staff:
-                return redirect("public:vote")
+            return redirect("public:vote")
 
         poll_id = self.kwargs['poll_id']
         question_id = self.kwargs['question_id']
