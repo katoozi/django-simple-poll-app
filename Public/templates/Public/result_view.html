@@ -64,6 +64,7 @@
 {% endblock content %}
 {% block js_files %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.5.0"></script>
 <script>
     function get_data_from_server(server_address, poll_id, question_id){
         $.get(server_address, function(data) {
@@ -76,18 +77,47 @@
 
             var ctx = $("#" + convas_id).get(0).getContext("2d");
 
-            new Chart(ctx, {
-                    type: '{{ chart_type }}', data: data, 
-                    options: {
-                        scales:{
-                            yAxes: [{
-                                ticks: {
-                                    max: 3,
-                                    min: 0,
-                                    stepSize: 1
-                                }
-                            }]
+            var plugins = {
+                datalabels: {
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] !== 0; // or >= 1 or ...
+                    },
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += Number(data);
+                        });
+                        let percentage = (value*100 / sum).toFixed(2)+"%";
+                        return percentage;
+                    },
+                    color: '#000000',
+                }
+            };
+
+            chart_type = "{{ chart_type }}";
+            if(chart_type == "pie"){
+                var scales = {}
+            }else{
+                var scales = {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            stepSize: 1
                         }
+                    }]
+                }
+            }
+
+            new Chart(ctx, {
+                    type: '{{ chart_type }}', 
+                    data: data,
+                    options: {
+                        tooltips: {
+                            enabled: false
+                        },
+                        plugins: plugins,
+                        scales: scales
                     }
             });
             $("#" + question_id + "-" + poll_id).hide();
