@@ -38,26 +38,27 @@ class PublicModelsTests(TestCase):
         )
 
     def tearDown(self):
+        # remove all redis keys after tests are done, because django does not simulate redis db
         self.redis_connection.flushall()
 
     def test_poll_model(self):
         # Poll model asserts
         polls = Poll.published.all()
-        self.assertEqual(polls.exists(), False,
-                         "Poll Published Manager Does Not Work!")
+        self.assertFalse(
+            polls.exists(), "Poll Published Manager Does Not Work!")
 
         self.assertEqual(str(self.poll), "Testing",
                          "__str__ Of Poll Model Have Issue!")
         self.assertEqual(self.poll.__unicode__(), "Testing",
                          "__unicode__ Of Poll Model Have Issue!")
         poll_questions = self.poll.questions.all()
-        self.assertEqual(poll_questions.exists(), True,
-                         "Poll ManyToMany Relation Does Not Work!")
+        self.assertTrue(poll_questions.exists(),
+                        "Poll ManyToMany Relation Does Not Work!")
 
         user_polls = Poll.published.exclude_user_old_votes(self.user.pk).all()
-        self.assertEqual(user_polls.exists(
-        ), False, "exclude_user_old_votes In Published Manager of Poll Model have Issue!,"
-            "Because Poll Not Published")
+        self.assertFalse(user_polls.exists(),
+                         "exclude_user_old_votes In Published Manager of Poll Model have Issue!,"
+                         "Because Poll Not Published")
 
         self.assertEqual(self.poll.get_vote_count(), None,
                          "Poll poll_vote_count attribute Does Not Wotk Currectly!")
