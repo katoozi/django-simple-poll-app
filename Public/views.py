@@ -8,8 +8,10 @@ import random
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.db.transaction import atomic
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView, ListView
 
@@ -25,6 +27,11 @@ class LoginView(FormView):
     template_name = "Public/login.html"
 
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.is_superuser and request.user.is_staff:
+                return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+            else:
+                return redirect("public:vote")
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
@@ -44,12 +51,21 @@ class LoginView(FormView):
             return render(request, self.template_name, {
                 "form": form_data
             })
+        
+        if not user_obj.is_active:
+            # user is disabled and it's not allowed to login
+            return render(request, self.template_name, {
+                "form": form_data
+            })
 
         # check the user remember box checked
         if form_data.cleaned_data['remember_me'] is 'True':
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
         login(request, user_obj)
+
+        if user_obj.is_superuser and user_obj.is_staff:
+            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
 
         # redirect to next url arg if it exist in url
         if request.GET.get("next", None):
@@ -67,6 +83,8 @@ class VoteView(FormView):
 
     def get(self, request, *args, **kwargs):
         # get polls that user does not send vote yet and published polls
+        if request.user.is_superuser and request.user.is_staff:
+                return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)
 
@@ -75,6 +93,9 @@ class VoteView(FormView):
         })
 
     def post(self, request, *args, **kwargs):
+        if request.user.is_superuser and request.user.is_staff:
+                return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+
         # convert request.POST QueryDict to dict
         post_data = request.POST.dict()
 
@@ -132,8 +153,9 @@ class VoteView(FormView):
         # # use for get total poll votes
         redis_con.incr("poll:%s" % poll_id)
 
-        for query in queries:
-            Vote.objects.create(**query)
+        with atomic():
+            for query in queries:
+                Vote.objects.create(**query)
 
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)
@@ -148,6 +170,11 @@ class VoteResultView(ListView):
     template_name = "Public/result_view.html"
     context_object_name = "polls"
     chart_types = ['pie', 'bar', 'radar', 'polarArea']
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_superuser or not request.user.is_staff:
+                return redirect("public:vote")
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         return Poll.objects.all()
@@ -168,6 +195,9 @@ class VoteResultJsonGenerator(FormView):
     http_method_names = ['get']
 
     def get(self, request, *args, **kwargs):
+        if not request.user.is_superuser or not request.user.is_staff:
+                return redirect("public:vote")
+
         poll_id = self.kwargs['poll_id']
         question_id = self.kwargs['question_id']
 
@@ -192,7 +222,6 @@ class VoteResultJsonGenerator(FormView):
                 data.append(0)
             else:
                 data.append(result.decode("utf-8"))
-
 
         backgroundColor = ["rgb(%s, %s, %s)" % (
             random.randrange(0, 255, 1),
