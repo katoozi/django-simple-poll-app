@@ -28,7 +28,7 @@ class LoginView(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            if request.user.is_superuser and request.user.is_staff:
+            if request.user.is_superuser or request.user.is_staff:
                 return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
             else:
                 return redirect("public:vote")

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 
 from .models import Item, Poll, Question, Vote
 from .views import (LoginView, VoteResultJsonGenerator, VoteResultView,
@@ -18,7 +19,7 @@ class PublicModelsTests(TestCase):
         # we use factory for simulate the http requests
         self.factory = RequestFactory()
         # a user object for create database records
-        self.user = User.objects.create(
+        self.user = User.objects.create_user(
             username="testing_lover", password="i_love_testing"
         )
         self.poll = Poll.objects.create(title="Testing", is_published=False)
@@ -96,4 +97,33 @@ class PublicModelsTests(TestCase):
 
 
 class PublicViewsTests(TestCase):
-    pass
+    def setUp(self):
+        self.super_user = User.objects.create_user(
+            username="testing_lover_super_user", password="i_love_testing", is_superuser=True, is_staff=True
+        )
+        self.anonymous_user = User.objects.create_user(
+            username="testing_lover_anonymous_user", password="i_love_testing"
+        )
+
+    def test_LoginViewGetRequest(self):
+        # Test Get Requets Without User Login
+        response = self.client.get(reverse("public:login"))
+        self.assertEqual(response.status_code, 200,
+                         "Login View Send %s Instead of 200" % response.status_code)
+
+        # Test Get Request With Anonymous User Login
+        self.client.login(
+            username="testing_lover_anonymous_user", password="i_love_testing")
+        response = self.client.get(reverse("public:login"), follow=True)
+        self.assertRedirects(response, reverse("public:vote"))
+
+        # Test Get Request With Super User Login
+        self.client.login(
+            username="testing_lover_super_user", password="i_love_testing")
+        response = self.client.get(reverse("public:login"), follow=True)
+        self.assertRedirects(response, reverse(
+            "public:view_result", kwargs={'chart_type': "pie"}))
+
+    def test_LoginViewPostRequest(self):
+        # Logout all login users
+        self.client.logout()
