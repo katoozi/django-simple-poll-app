@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-27 18:54+0430\n"
+"POT-Creation-Date: 2019-03-28 12:01+0430\n"
 "PO-Revision-Date: 2019-03-12 10:24+3:30\n"
 "Last-Translator: Mohammad Katoozi k2527806@gmail.com\n"
 "Language-Team: Persian\n"
@@ -98,39 +98,39 @@ msgstr "جواب"
 msgid "Answers"
 msgstr "جواب‌ها"
 
-#: Public/models.py:76
+#: Public/models.py:79
 msgid "Poll Title"
 msgstr "عنوان نظرسنجی"
 
-#: Public/models.py:79
+#: Public/models.py:82
 msgid "is published"
 msgstr "پخش شده"
 
-#: Public/models.py:85 Public/models.py:102
+#: Public/models.py:88 Public/models.py:105
 msgid "poll"
 msgstr "نظر سنجی"
 
-#: Public/models.py:86
+#: Public/models.py:89
 msgid "polls"
 msgstr "نظر سنجی‌ها"
 
-#: Public/models.py:104
+#: Public/models.py:107
 msgid "question"
 msgstr "سوال"
 
-#: Public/models.py:106
+#: Public/models.py:109
 msgid "voted item"
 msgstr "گزینه انتخاب شده"
 
-#: Public/models.py:108
+#: Public/models.py:111
 msgid "user"
 msgstr "کاربر"
 
-#: Public/models.py:109
+#: Public/models.py:112
 msgid "user's IP"
 msgstr "ای‌پی کاربر"
 
-#: Public/templates/Components/card.html:27
+#: Public/templates/Components/card.html:28
 msgid "This Poll Does not have Question Yet."
 msgstr "سوالی برای این نظرسنجی درنظر گرفته نشده است"
 
@@ -140,9 +140,24 @@ msgid "Persian"
 msgstr "فارسی"
 
 #: Public/templates/Components/nav.html:26
-#: Public/templates/Components/nav.html:64 Public/templates/Public/vote.html:39
+#: Public/templates/Components/nav.html:80 Public/templates/Public/vote.html:39
 msgid "English"
 msgstr "انگلیسی"
+
+#: Public/templates/Components/nav.html:60
+#: Public/templates/Components/nav.html:93
+msgid "Charts"
+msgstr "نمودار‌ها"
+
+#: Public/templates/Components/nav.html:62
+#: Public/templates/Components/nav.html:95
+msgid "Pie"
+msgstr "دایره‌ای"
+
+#: Public/templates/Components/nav.html:63
+#: Public/templates/Components/nav.html:96
+msgid "Bar"
+msgstr "میله‌ای ستونی"
 
 #: Public/templates/Public/login.html:7 Public/templates/Public/login.html:59
 msgid "Login"
@@ -168,22 +183,22 @@ msgstr "مرا بخاطر بسپار"
 msgid "Vote Results"
 msgstr "نتایج نظرسنجی‌ها"
 
-#: Public/templates/Public/result_view.html:32
-#: Public/templates/Public/result_view.html:34
+#: Public/templates/Public/result_view.html:31
+msgid "Total Votes"
+msgstr "تمام رائ‌ها"
+
+#: Public/templates/Public/result_view.html:37
+#: Public/templates/Public/result_view.html:39
 msgid "Status"
 msgstr "وضعیت"
 
-#: Public/templates/Public/result_view.html:32
+#: Public/templates/Public/result_view.html:37
 msgid "Open"
 msgstr "باز"
 
-#: Public/templates/Public/result_view.html:34
+#: Public/templates/Public/result_view.html:39
 msgid "Close"
 msgstr "بسته"
-
-#: Public/templates/Public/result_view.html:40
-msgid "Total Votes"
-msgstr "تمام رائ‌ها"
 
 #: Public/templates/Public/result_view.html:55
 #: Public/templates/Public/vote.html:86
