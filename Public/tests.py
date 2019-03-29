@@ -98,12 +98,18 @@ class PublicModelsTests(TestCase):
 
 class PublicViewsTests(TestCase):
     def setUp(self):
+        self.redis_connection = settings.REDIS_CONNECTION
+        self.factory = RequestFactory()
         self.super_user = User.objects.create_user(
             username="testing_lover_super_user", password="i_love_testing", is_superuser=True, is_staff=True
         )
         self.anonymous_user = User.objects.create_user(
             username="testing_lover_anonymous_user", password="i_love_testing"
         )
+
+    def tearDown(self):
+        # remove all redis keys after tests are done, because django does not simulate redis db
+        self.redis_connection.flushall()
 
     def test_LoginViewGetRequest(self):
         # Test Get Requets Without User Login
@@ -151,17 +157,100 @@ class PublicViewsTests(TestCase):
             "remember_me": "True"
         })
         self.assertRedirects(response, reverse("public:vote"))
-        
+
         # Test Super User After Login Redirect To
         response = self.client.post(reverse("public:login"), {
             "username": "testing_lover_super_user",
             "password": "i_love_testing"  # wrong password
         })
-        self.assertRedirects(response, reverse("public:view_result", kwargs={'chart_type': "pie"}))
-        
+        self.assertRedirects(response, reverse(
+            "public:view_result", kwargs={'chart_type': "pie"}))
+
         # Test Super User After Login Redirect To With next in url
         response = self.client.post(reverse("public:login") + "?next=/admin/", {
             "username": "testing_lover_super_user",
             "password": "i_love_testing",  # wrong password
         })
         self.assertRedirects(response, reverse("admin:index"))
+
+    def test_VoteViewGetRequest(self):
+        # Test the poll context object
+        self.client.login(username=self.anonymous_user.username,
+                          password="i_love_testing")
+        response = self.client.get(reverse("public:vote"))
+        self.assertFalse(response.context['polls'].exists(
+        ), "polls object must be False because poll not published!")
+
+        # Test the super ans staff users redirection
+        self.client.login(username=self.super_user.username,
+                          password="i_love_testing")
+        response = self.client.post(reverse("public:vote"))
+        self.assertRedirects(response, reverse(
+            "public:view_result", kwargs={'chart_type': "pie"}))
+
+        # Test the request post data does not have poll_id key
+        self.client.login(username=self.anonymous_user.username,
+                          password="i_love_testing")
+        response = self.client.post(reverse("public:vote"), {"1:3": "1"})
+        self.assertEqual(
+            response.context['message'], "poll_id Does Not Exist!", "check poll_id key does not work!")
+
+        # Test poll with this id does not exist.
+        self.client.login(username=self.anonymous_user.username,
+                          password="i_love_testing")
+        response = self.client.post(
+            reverse("public:vote"), {"poll_id": "5155156"})
+        self.assertEqual(
+            response.context['message'], "poll with this id does not exist.", "fetch poll with this id does not Work!")
+
+    def test_VoteResultView(self):
+        # Test anonymous users redirection
+        self.client.login(username=self.anonymous_user.username,
+                          password="i_love_testing")
+        response = self.client.get(
+            reverse("public:view_result", kwargs={'chart_type': "pie"}))
+        self.assertRedirects(response, reverse("public:vote"))
+
+        # Test unknown chart type
+        self.client.login(username=self.super_user.username,
+                          password="i_love_testing")
+        response = self.client.get(
+            reverse("public:view_result", kwargs={'chart_type': "kdfsdfmksdm"}))
+        self.assertEqual(
+            response.context['chart_type'], "pie", "Default chart type must be pie!")
+
+    def test_VoteResultJsonGenerator(self):
+        # Test anonymous users redirection
+        self.client.login(username=self.anonymous_user.username,
+                          password="i_love_testing")
+        response = self.client.get(reverse("public:view_result_json_generator",
+                                           kwargs={'poll_id': "1", "question_id": 1}))
+        self.assertRedirects(response, reverse("public:vote"))
+
+        # Test Poll With This Id Does not Exist. JsonResponse
+        self.client.login(username=self.super_user.username,
+                          password="i_love_testing")
+        response = self.client.get(reverse("public:view_result_json_generator",
+                                           kwargs={'poll_id': "1", "question_id": 1}))
+        self.assertJSONEqual(str(response.content, encoding="utf-8"),
+                             {"Error": "Poll With That Id Does not Exist."})
+
+        # Test Poll Does Not Have Question With This Id
+        self.client.login(username=self.super_user.username,
+                          password="i_love_testing")
+        poll = Poll.objects.create(title="Testing", is_published=True)
+        response = self.client.get(reverse("public:view_result_json_generator",
+                                           kwargs={'poll_id': poll.id, "question_id": 1}))
+        self.assertJSONEqual(str(response.content, encoding="utf-8"),
+                             {"Error": "Question With That Id Does not belong to This Poll"})
+
+        # Test other remain block code
+        question = Question.objects.create(title="Testing Is ?", column=4)
+        poll.questions.add(question)
+        Item.objects.create(value="Good", pos=0, question=question)
+        Item.objects.create(value="Bad", pos=0, question=question)
+        Item.objects.create(value="Awful", pos=0, question=question)
+        self.client.login(username=self.super_user.username,
+                          password="i_love_testing")
+        response = self.client.get(reverse("public:view_result_json_generator",
+                                           kwargs={'poll_id': poll.id, "question_id": question.id}))

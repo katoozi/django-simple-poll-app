@@ -103,14 +103,16 @@ class VoteView(FormView):
         poll_id = post_data.get('poll_id', None)
         if not poll_id:
             return render(request, self.template_name, {
-                "polls": polls
+                "polls": polls,
+                "message": "poll_id Does Not Exist!"
             })
 
         try:
             poll = polls.get(pk=poll_id)
         except Poll.DoesNotExist:
             return render(request, self.template_name, {
-                "polls": polls
+                "polls": polls,
+                "message": "poll with this id does not exist."
             })
 
         queries = []
@@ -121,7 +123,8 @@ class VoteView(FormView):
             answer_id = post_data.get(key, None)
             if not answer_id:
                 return render(request, self.template_name, {
-                    "polls": polls
+                    "polls": polls,
+                    "message": "Question With This Id Does not Belong To This Poll!"
                 })
             question_answers = question.question_answers.all()
 
