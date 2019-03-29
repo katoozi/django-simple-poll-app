@@ -125,5 +125,43 @@ class PublicViewsTests(TestCase):
             "public:view_result", kwargs={'chart_type': "pie"}))
 
     def test_LoginViewPostRequest(self):
-        # Logout all login users
+        # Remove all session
         self.client.logout()
+
+        # Test LoginForm not Valid Situation
+        response = self.client.post(reverse("public:login"), {
+            "username": "testing_lover_anonymous_user",
+            "remember_me": "True"
+        })
+        self.assertFormError(response, 'form', "password",
+                             "This field is required.")
+
+        # Test user With This credentials Does Not Exist.
+        response = self.client.post(reverse("public:login"), {
+            "username": "testing_lover_anonymous_user",
+            "password": "TruekslMDsMDFLkmsdLkfmksdkf"  # wrong password
+        })
+        self.assertEqual(
+            response.context['message'], 'User With This credentials Does Not Exists.', "auhtenticate Does Not Work!")
+
+        # Test Anonymous User After Login Redirect To
+        response = self.client.post(reverse("public:login"), {
+            "username": "testing_lover_anonymous_user",
+            "password": "i_love_testing",  # wrong password
+            "remember_me": "True"
+        })
+        self.assertRedirects(response, reverse("public:vote"))
+        
+        # Test Super User After Login Redirect To
+        response = self.client.post(reverse("public:login"), {
+            "username": "testing_lover_super_user",
+            "password": "i_love_testing"  # wrong password
+        })
+        self.assertRedirects(response, reverse("public:view_result", kwargs={'chart_type': "pie"}))
+        
+        # Test Super User After Login Redirect To With next in url
+        response = self.client.post(reverse("public:login") + "?next=/admin/", {
+            "username": "testing_lover_super_user",
+            "password": "i_love_testing",  # wrong password
+        })
+        self.assertRedirects(response, reverse("admin:index"))
