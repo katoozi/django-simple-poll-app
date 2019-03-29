@@ -28,7 +28,7 @@ class LoginView(FormView):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            if request.user.is_superuser and request.user.is_staff:
+            if request.user.is_superuser or request.user.is_staff:
                 return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
             else:
                 return redirect("public:vote")
@@ -49,13 +49,8 @@ class LoginView(FormView):
         if user_obj is None:
             # credentials that user submited do not belong to anyone
             return render(request, self.template_name, {
-                "form": form_data
-            })
-
-        if not user_obj.is_active:
-            # user is disabled and it's not allowed to login
-            return render(request, self.template_name, {
-                "form": form_data
+                "form": form_data,
+                "message": "User With This credentials Does Not Exists."
             })
 
         # check the user remember box checked
@@ -64,12 +59,12 @@ class LoginView(FormView):
 
         login(request, user_obj)
 
-        if user_obj.is_superuser and user_obj.is_staff:
-            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
-
         # redirect to next url arg if it exist in url
         if request.GET.get("next", None):
             return redirect(request.GET["next"])
+        
+        if user_obj.is_superuser and user_obj.is_staff:
+            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
 
         # default redirect to vote page
         return redirect("public:vote")
@@ -93,7 +88,7 @@ class VoteView(FormView):
         })
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_superuser and request.user.is_staff:
+        if request.user.is_superuser or request.user.is_staff:
             return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
 
         # convert request.POST QueryDict to dict
@@ -108,14 +103,16 @@ class VoteView(FormView):
         poll_id = post_data.get('poll_id', None)
         if not poll_id:
             return render(request, self.template_name, {
-                "polls": polls
+                "polls": polls,
+                "message": "poll_id Does Not Exist!"
             })
 
         try:
             poll = polls.get(pk=poll_id)
         except Poll.DoesNotExist:
             return render(request, self.template_name, {
-                "polls": polls
+                "polls": polls,
+                "message": "poll with this id does not exist."
             })
 
         queries = []
@@ -126,7 +123,8 @@ class VoteView(FormView):
             answer_id = post_data.get(key, None)
             if not answer_id:
                 return render(request, self.template_name, {
-                    "polls": polls
+                    "polls": polls,
+                    "message": "Question With This Id Does not Belong To This Poll!"
                 })
             question_answers = question.question_answers.all()
 
