@@ -19,9 +19,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Public',
     'easy_select2',
-    'smart_selects',
-    'dal',
-    'dal_select2',
     'mathfilters',
 ]
 
