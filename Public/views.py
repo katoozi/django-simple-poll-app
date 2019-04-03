@@ -2,14 +2,13 @@
 
 from __future__ import unicode_literals
 
-import json
 import random
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.transaction import atomic
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -29,7 +28,10 @@ class LoginView(FormView):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.user.is_superuser or request.user.is_staff:
-                return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+                return redirect(
+                    reverse(
+                        "public:view_result",
+                        kwargs={'chart_type': "pie"}))
             else:
                 return redirect("public:vote")
         return render(request, self.template_name)
@@ -54,7 +56,7 @@ class LoginView(FormView):
             })
 
         # check the user remember box checked
-        if form_data.cleaned_data['remember_me'] is 'True':
+        if form_data.cleaned_data['remember_me'] == 'True':
             settings.SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
         login(request, user_obj)
@@ -62,9 +64,12 @@ class LoginView(FormView):
         # redirect to next url arg if it exist in url
         if request.GET.get("next", None):
             return redirect(request.GET["next"])
-        
+
         if user_obj.is_superuser and user_obj.is_staff:
-            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+            return redirect(
+                reverse(
+                    "public:view_result",
+                    kwargs={'chart_type': "pie"}))
 
         # default redirect to vote page
         return redirect("public:vote")
@@ -79,7 +84,10 @@ class VoteView(FormView):
     def get(self, request, *args, **kwargs):
         # get polls that user does not send vote yet and published polls
         if request.user.is_superuser and request.user.is_staff:
-            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+            return redirect(
+                reverse(
+                    "public:view_result",
+                    kwargs={'chart_type': "pie"}))
         polls = self.model.published.exclude_user_old_votes(
             self.request.user.pk)
 
@@ -89,7 +97,10 @@ class VoteView(FormView):
 
     def post(self, request, *args, **kwargs):
         if request.user.is_superuser or request.user.is_staff:
-            return redirect(reverse("public:view_result", kwargs={'chart_type': "pie"}))
+            return redirect(
+                reverse(
+                    "public:view_result",
+                    kwargs={'chart_type': "pie"}))
 
         # convert request.POST QueryDict to dict
         post_data = request.POST.dict()
@@ -124,7 +135,8 @@ class VoteView(FormView):
             if not answer_id:
                 return render(request, self.template_name, {
                     "polls": polls,
-                    "message": "Question With This Id Does not Belong To This Poll!"
+                    "message": "Question With This Id"
+                    " Does not Belong To This Poll!"
                 })
             question_answers = question.question_answers.all()
 
@@ -134,7 +146,9 @@ class VoteView(FormView):
                 return render(request, self.template_name, {
                     "polls": polls
                 })
-            # Vote.objects.create(user=request.user, poll=poll, question=question, item=answer, ip="127.0.0.1")
+            # Vote.objects.create(user=request.user, poll=poll,
+            #                     question=question, item=answer,
+            #                     ip="127.0.0.1")
             queries.append(
                 {
                     "poll": poll,
@@ -207,7 +221,9 @@ class VoteResultJsonGenerator(FormView):
         try:
             question = poll.questions.get(id=question_id)
         except Question.DoesNotExist:
-            return JsonResponse({"Error": "Question With That Id Does not belong to This Poll"})
+            return JsonResponse(
+                {"Error": "Question With That Id"
+                 " Does not belong to This Poll"})
 
         answer_objects = question.question_answers.all()
 

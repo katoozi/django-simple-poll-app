@@ -27,7 +27,8 @@ question_column_choices = (
 class Question(models.Model):
     title = models.CharField(max_length=250, verbose_name=_('Question'))
     column = models.IntegerField(
-        choices=question_column_choices, default=1, verbose_name=_('Answer Columns'))
+        choices=question_column_choices, default=1,
+        verbose_name=_('Answer Columns'))
 
     def __str__(self):
         return self.title
@@ -59,15 +60,19 @@ class Item(models.Model):
         return self.value
 
     def get_vote_count(self, poll_id, question_id):
-        return redis_con.get("poll:%s,question:%s,answer:%s" % (poll_id, question_id, self.id))
+        return redis_con.get("poll:%s,question:%s,answer:%s" %
+                             (poll_id, question_id, self.id))
 
 
 class PublishedManager(Manager):
     def get_queryset(self):
-        return super(PublishedManager, self).get_queryset().filter(is_published=True)
+        return super(
+            PublishedManager, self).get_queryset().filter(
+            is_published=True)
 
     def exclude_user_old_votes(self, user_id):
-        # get poll ids that user already votes, we save them in redis for reduce sql querys
+        # get poll ids that user already votes
+        # we save them in redis for reduce sql querys
         # remember that you have to enable Redis Persistence
         user_votes = redis_con.smembers("user:%s" % user_id)
 
@@ -107,8 +112,9 @@ class Vote(models.Model):
         Question, on_delete=models.CASCADE, verbose_name=_('question'))
     item = models.ForeignKey(
         Item, on_delete=models.CASCADE, verbose_name=_('voted item'))
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
-                             verbose_name=_('user'))
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, blank=True, null=True,
+        verbose_name=_('user'))
     ip = models.GenericIPAddressField(verbose_name=_('user\'s IP'))
     vote_time = models.DateTimeField(auto_now_add=True)
 

@@ -56,13 +56,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'PollSystem.wsgi.application'
 
-""" 
+"""
 Redis Databases:
     0 => user and poll system data
     1 => user login sessions
 """
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # used for enable remember me on login page
+# used for enable remember me on login page
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS = {
     'host': 'localhost',
@@ -92,18 +93,14 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.'
+     'UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.'
+     'MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.'
+     'CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.'
+     'NumericPasswordValidator'},
 ]
 
 LANGUAGE_CODE = 'en'
