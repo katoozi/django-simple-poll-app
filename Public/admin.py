@@ -42,7 +42,8 @@ class VoteAdminPanel(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    # remove delete action from vote model actions because we don't have delete permission anymore
+    # remove delete action from vote model actions
+    # because we don't have delete permission anymore
     def get_actions(self, request):
         return []
 
