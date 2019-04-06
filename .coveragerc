@@ -3,8 +3,8 @@ source = .
 branch = True
 omit =
     Public/migrations/*
-plugins=
-    django_coverage_plugin
+# plugins=
+#     django_coverage_plugin
 
 # [report]
 # exclude_lines =
