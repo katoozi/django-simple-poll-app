@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.utils import translation
 from django.shortcuts import redirect
+from django.utils import translation
 
 
 class LanguageControl(object):

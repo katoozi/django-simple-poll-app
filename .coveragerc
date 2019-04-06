@@ -1,0 +1,19 @@
+[run]
+source = .
+branch = True
+omit =
+    Public/migrations/*
+plugins=
+    django_coverage_plugin
+
+# [report]
+# exclude_lines =
+#     pragma: no cover
+#     def __repr__
+#     raise AssertionError
+#     raise NotImplementedError
+#     if __name__ == .__main__.:
+# ignore_errors = True
+
+[html]
+directory = htmlcov
